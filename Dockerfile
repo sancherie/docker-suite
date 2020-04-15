@@ -1,7 +1,7 @@
 ##################
 # THE BASE IMAGE #
 ##################
-FROM docker:19.03.8
+FROM docker:18.09.7
 
 # Install the dependencies
 RUN apk update
