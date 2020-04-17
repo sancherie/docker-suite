@@ -1,7 +1,7 @@
 ##################
 # THE BASE IMAGE #
 ##################
-FROM docker:18.09.7
+FROM docker:19.03.8
 
 # Install the dependencies
 RUN apk update
@@ -24,6 +24,9 @@ RUN cd openvpn-2.4.6 && ./configure && make && make install
 # Install secrethub
 RUN curl -fsSL https://alpine.secrethub.io/pub -o /etc/apk/keys/secrethub.rsa.pub \
     && apk add --repository https://alpine.secrethub.io/alpine/edge/main secrethub-cli
+
+# Install bash
+RUN apk add bash
 
 # Enable BuildKit
 ENV COMPOSE_DOCKER_CLI_BUILD=1
