@@ -5,7 +5,7 @@ FROM docker:19.03.8
 
 # Install the dependencies
 RUN apk update
-RUN apk add curl py-pip python-dev libffi-dev openssl-dev gcc libc-dev make lzo-dev linux-pam-dev
+RUN apk add curl py-pip python-dev libffi-dev openssl-dev gcc libc-dev make lzo-dev linux-pam-dev cmake automake
 
 # Install docker-compose
 RUN pip install docker-compose
@@ -25,8 +25,18 @@ RUN cd openvpn-2.4.6 && ./configure && make && make install
 RUN curl -fsSL https://alpine.secrethub.io/pub -o /etc/apk/keys/secrethub.rsa.pub \
     && apk add --repository https://alpine.secrethub.io/alpine/edge/main secrethub-cli
 
-# Install bash
-RUN apk add bash
+# Install libyaml-cpp
+RUN apk add git g++ \
+    && git clone https://github.com/jbeder/yaml-cpp.git && mkdir -p yaml-cpp/build && cd yaml-cpp/build \
+    && cmake .. && make && make install \
+    && cd ../.. && rm -rf yaml-cpp
+
+# Install docker-compose-multistage
+RUN apk add automake libtool autoconf \
+    && git clone https://github.com/sancherie/docker-compose-multistage.git \
+    && cd docker-compose-multistage \
+    && ./autogen.sh && ./configure && make && make install \
+    && cd .. && rm -rf docker-compose-multistage
 
 # Enable BuildKit
 ENV COMPOSE_DOCKER_CLI_BUILD=1
